@@ -1,17 +1,20 @@
 import express from "express";
 import helmet from "helmet";
+import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
-import "dotenv/config";
 import router from "./src/routes/index.js";
+import xss from "xss-clean";
+import compression from "compression";
+import "dotenv/config";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-const PORT = process.env.PORT || 8000;
-
 const app = express();
+
+// app.enable("trust proxy");
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
@@ -29,20 +32,31 @@ const helmetOptions = {
 };
 
 const corsOptions = {
-  origin: ["localhost:5001"],
+  origin: ["http://localhost:5001", "http://localhost:5173"],
   optionsSuccessStatus: 200,
 };
 
 app.use(limiter);
 app.use(helmet(helmetOptions));
 app.use(cors(corsOptions));
-app.use(express.json());
+app.use(express.json({ limit: "10kb" }));
+app.use(express.urlencoded({ extended: true, limit: "10kb" }));
+
+// Data sanitization against XSS
+app.use(xss());
+
+app.use(compression());
+
+// Development logging
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
+}
 
 // Declare static folder
-app.use(express.static(path.join(__dirname, "public").replace(/\\/g, "/")));
+app.use(express.static(path.join(__dirname, "public")));
 
 // ROUTES
-app.use("/api/v1", router);
+app.use("/", router);
 
 // custom 404
 app.use((req, res, next) => {
@@ -55,4 +69,4 @@ app.use((err, req, res, next) => {
   res.status(500).send("Something broke!");
 });
 
-app.listen(PORT, () => console.log(`Server is running on port: ${PORT}`));
+export default app;
