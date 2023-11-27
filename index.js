@@ -5,6 +5,7 @@ import cors from "cors";
 import path from "path";
 import { fileURLToPath } from "url";
 import "dotenv/config";
+import router from "./src/routes/index.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -28,22 +29,20 @@ const helmetOptions = {
 };
 
 const corsOptions = {
-  origin: ["localhost:5000"],
+  origin: ["localhost:5001"],
   optionsSuccessStatus: 200,
 };
 
 app.use(limiter);
 app.use(helmet(helmetOptions));
 app.use(cors(corsOptions));
-app.use(express.static(path.join(__dirname, "public", "frontend")));
+app.use(express.json());
 
-app.get("/", function (req, res) {
-  res.sendFile("/index.html");
-});
+// Declare static folder
+app.use(express.static(path.join(__dirname, "public").replace(/\\/g, "/")));
 
-app.get("/api/v1", function (req, res) {
-  res.status(200).send("welcome");
-});
+// ROUTES
+app.use("/api/v1", router);
 
 // custom 404
 app.use((req, res, next) => {
