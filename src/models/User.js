@@ -5,6 +5,6 @@ export default class User {
   }
   static findOrCreate(options, callback) {
     // console.log(options);
-    callback(null, { googleId: "106432048443014957193" });
+    callback(null, { googleId: "here goes google number" });
   }
 }
