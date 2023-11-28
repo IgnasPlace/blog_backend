@@ -14,10 +14,10 @@ const sql = postgres({
   },
 });
 
-// Test connection function
-export async function getPgVersion() {
-  const result = await sql`select version()`;
-  console.log(result);
-}
+// Test connection function:
+// export async function getPgVersion() {
+//   const result = await sql`select version()`;
+//   console.log(result);
+// }
 
 export default sql;

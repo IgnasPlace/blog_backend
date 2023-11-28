@@ -2,7 +2,8 @@ import sql from "../db/index.js";
 
 const getAllPosts = async (req, res, next) => {
   const result = await sql`
-  select * from post
+  SELECT * from post
+  ORDER BY created_on DESC
   `;
 
   res.status(200).json(result);
@@ -10,7 +11,7 @@ const getAllPosts = async (req, res, next) => {
 
 const getPostById = async (req, res, next) => {
   const result = await sql`
-  select * from post
+  SELECT * from post
   WHERE id = ${req.params.id};
   `;
 
@@ -32,7 +33,6 @@ const createPost = async (req, res, next) => {
 
 const updatePost = async (req, res, next) => {
   if (req.body.id === +req.params.id) {
-    console.log(req.body);
     const result = await sql`
       UPDATE post
       SET title = ${req.body.title},

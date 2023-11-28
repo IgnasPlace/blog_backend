@@ -4,6 +4,8 @@ import morgan from "morgan";
 import rateLimit from "express-rate-limit";
 import cors from "cors";
 import path from "path";
+import session from "express-session";
+import passport from "passport";
 import { fileURLToPath } from "url";
 import router from "./src/routes/index.js";
 import xss from "xss-clean";
@@ -13,6 +15,10 @@ import "dotenv/config";
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
+
+app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // app.enable("trust proxy");
 
@@ -53,7 +59,7 @@ if (process.env.NODE_ENV === "development") {
 }
 
 // Declare static folder
-app.use(express.static(path.join(__dirname, "public")));
+// app.use(express.static(path.join(__dirname, "public")));
 
 // ROUTES
 app.use("/", router);
