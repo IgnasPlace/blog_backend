@@ -6,7 +6,6 @@ import {
   updatePost,
   deletePost,
 } from "../controllers/postsController.js";
-import { isLoggedIn } from "./authRouter.js";
 const router = express.Router();
 
 router.route("/").get(getAllPosts).post(createPost);

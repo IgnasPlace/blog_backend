@@ -16,7 +16,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const app = express();
 
-app.use(session({ secret: "cats", resave: false, saveUninitialized: true }));
+app.use(
+  session({
+    secret: "iggyDev",
+    resave: false,
+    saveUninitialized: false,
+    maxAge: 1000 * 60 * 60 * 24,
+  })
+);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -38,8 +45,10 @@ const helmetOptions = {
 };
 
 const corsOptions = {
-  origin: ["http://localhost:5001", "http://localhost:5173"],
-  optionsSuccessStatus: 200,
+  origin: [process.env.BACKEND_API_URL, "http://localhost:5173"],
+  methods: "GET,POST,PATCH,DELETE",
+  // optionsSuccessStatus: 200,
+  credentials: true,
 };
 
 app.use(limiter);
