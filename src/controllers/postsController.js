@@ -71,7 +71,7 @@ const deletePost = async (req, res, next) => {
       const result = await sql`
       DELETE FROM post
       WHERE id = ${req.params.id}
-      AND sub = ${req.body.userId}
+      AND sub = ${req.user.sub}
       RETURNING id;
       `;
       if (result.length === 1) {
